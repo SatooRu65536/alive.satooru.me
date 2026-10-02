@@ -1,13 +1,19 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "api-alive-satooru-me",
-  "compatibility_date": "2026-10-02",
+  "compatibility_date": "2026-09-30",
   "main": "./src/index.tsx",
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "api-alive-satooru-me",
       "database_id": "2d2a3130-70f8-4e0d-8766-efb8b6074807",
+    },
+  ],
+  "routes": [
+    {
+      "pattern": "alive.satooru.me",
+      "custom_domain": true,
     },
   ],
 }

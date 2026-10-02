@@ -12,6 +12,6 @@ app.get('/', (c) => {
   return c.render(<h1>Hello!</h1>);
 });
 
-app.route('/heart-rates', heartRateRoute);
+app.route('/api/heart-rates', heartRateRoute);
 
 export default app;
