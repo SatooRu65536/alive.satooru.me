@@ -5,12 +5,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.text.format.DateFormat
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import dev.satooru.weardatacollector.heartrate.HeartRateMonitorService
+import dev.satooru.weardatacollector.heartrate.HeartRateMonitorStatus
 
 // Android 16 以降は心拍センサーの権限が BODY_SENSORS から健康データ用の権限に置き換わる
 private val HEART_RATE_PERMISSION =
@@ -25,13 +28,21 @@ private val HEART_RATE_PERMISSION =
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var statusText: TextView
+    private lateinit var lastSentText: TextView
+    private lateinit var startButton: Button
+    private lateinit var stopButton: Button
+    private var isPermissionDenied = false
+
+    // 状態は送信用のスレッドからも更新されるため，メインスレッドに切り替えてから画面に反映する
+    private val statusListener: () -> Unit = { runOnUiThread(::render) }
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
             if (results[HEART_RATE_PERMISSION] == true) {
                 startMonitoring()
             } else {
-                statusText.setText(R.string.heart_rate_permission_denied)
+                isPermissionDenied = true
+                render()
             }
         }
 
@@ -39,8 +50,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         statusText = findViewById(R.id.status_text)
-        findViewById<Button>(R.id.start_button).setOnClickListener { requestPermissionsAndStart() }
-        findViewById<Button>(R.id.stop_button).setOnClickListener { stopMonitoring() }
+        lastSentText = findViewById(R.id.last_sent_text)
+        startButton = findViewById(R.id.start_button)
+        stopButton = findViewById(R.id.stop_button)
+        startButton.setOnClickListener { requestPermissionsAndStart() }
+        stopButton.setOnClickListener { stopMonitoring() }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        HeartRateMonitorStatus.addListener(statusListener)
+        // 画面を表示していない間の変化を反映する
+        render()
+    }
+
+    override fun onStop() {
+        HeartRateMonitorStatus.removeListener(statusListener)
+        super.onStop()
     }
 
     private fun requestPermissionsAndStart() {
@@ -59,13 +85,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 計測中の表示はサービスが計測を始めた時点で状態の変化として反映される
     private fun startMonitoring() {
+        isPermissionDenied = false
         ContextCompat.startForegroundService(this, Intent(this, HeartRateMonitorService::class.java))
-        statusText.setText(R.string.heart_rate_monitoring)
     }
 
     private fun stopMonitoring() {
         stopService(Intent(this, HeartRateMonitorService::class.java))
-        statusText.setText(R.string.heart_rate_stopped)
+    }
+
+    private fun render() {
+        val state = HeartRateMonitorStatus.state
+        statusText.setText(
+            when {
+                state.isMonitoring -> R.string.heart_rate_monitoring
+                isPermissionDenied -> R.string.heart_rate_permission_denied
+                else -> R.string.heart_rate_stopped
+            },
+        )
+        val lastSentAt = state.lastSentAt
+        lastSentText.text = getString(
+            R.string.heart_rate_last_sent,
+            if (lastSentAt == null) getString(R.string.heart_rate_not_sent_yet) else DateFormat.format("M/d HH:mm:ss", lastSentAt),
+        )
+        lastSentText.visibility = if (state.isMonitoring) View.VISIBLE else View.GONE
+        startButton.visibility = if (state.isMonitoring) View.GONE else View.VISIBLE
+        stopButton.visibility = if (state.isMonitoring) View.VISIBLE else View.GONE
     }
 }

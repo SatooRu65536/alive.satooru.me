@@ -32,7 +32,12 @@ private const val NANOSECONDS_PER_MILLISECOND = 1_000_000L
  */
 class HeartRateMonitorService : Service(), SensorEventListener {
     private val uploadExecutor = Executors.newSingleThreadScheduledExecutor()
-    private val uploader = HeartRateUploader(HeartRateApiClient(BuildConfig.API_BASE_URL)::send)
+    private val apiClient = HeartRateApiClient(BuildConfig.API_BASE_URL)
+    private val uploader = HeartRateUploader { samples ->
+        apiClient.send(samples).also {
+            if (it == UploadResult.SENT) HeartRateMonitorStatus.markSent(System.currentTimeMillis())
+        }
+    }
     private lateinit var sensorManager: SensorManager
     private lateinit var wakeLock: PowerManager.WakeLock
     private var isMonitoring = false
@@ -68,6 +73,7 @@ class HeartRateMonitorService : Service(), SensorEventListener {
         }
 
         isMonitoring = true
+        HeartRateMonitorStatus.setMonitoring(true)
         wakeLock.acquire()
         sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL)
         // 送信にかかった時間で間隔がずれて 1 分を超える分が別バッチに分かれないよう，固定レートで実行する
@@ -82,6 +88,7 @@ class HeartRateMonitorService : Service(), SensorEventListener {
     }
 
     override fun onDestroy() {
+        HeartRateMonitorStatus.setMonitoring(false)
         sensorManager.unregisterListener(this)
         // 停止までに溜まった分を送り終えてから WakeLock を解放し，送信中に CPU がスリープしないようにする
         uploadExecutor.execute {

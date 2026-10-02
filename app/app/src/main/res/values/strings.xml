@@ -4,6 +4,8 @@
     <string name="heart_rate_stop">計測停止</string>
     <string name="heart_rate_monitoring">心拍を計測中です</string>
     <string name="heart_rate_stopped">停止中です</string>
+    <string name="heart_rate_last_sent">最終送信: %1$s</string>
+    <string name="heart_rate_not_sent_yet">未送信</string>
     <string name="heart_rate_permission_denied">心拍センサーの権限が許可されていません</string>
     <string name="heart_rate_notification_channel_name">心拍の計測</string>
     <string name="heart_rate_notification_title">心拍を計測・送信しています</string>
