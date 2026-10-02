@@ -11,7 +11,7 @@ class HeartRateRequestBodyTest {
         val samples = listOf(HeartRateSample(1_700_000_000_000, 72f), HeartRateSample(1_700_000_001_000, 73.5f))
 
         assertEquals(
-            """{"samples":[{"measuredAt":1700000000000,"bpm":72.0},{"measuredAt":1700000001000,"bpm":73.5}]}""",
+            "1700000000000,72.0\n1700000001000,73.5",
             createHeartRateRequestBody(samples),
         )
     }

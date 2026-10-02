@@ -26,7 +26,7 @@ class HeartRateApiClient(private val baseUrl: String) {
             connection.connectTimeout = TIMEOUT_MS
             connection.readTimeout = TIMEOUT_MS
             connection.doOutput = true
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8")
+            connection.setRequestProperty("Content-Type", "text/csv; charset=utf-8")
             connection.outputStream.use { it.write(createHeartRateRequestBody(samples).toByteArray()) }
             val statusCode = connection.responseCode
             toUploadResult(statusCode).also {
