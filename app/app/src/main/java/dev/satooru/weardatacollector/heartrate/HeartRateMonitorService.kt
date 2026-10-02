@@ -32,7 +32,7 @@ private const val NANOSECONDS_PER_MILLISECOND = 1_000_000L
  */
 class HeartRateMonitorService : Service(), SensorEventListener {
     private val uploadExecutor = Executors.newSingleThreadScheduledExecutor()
-    private val apiClient = HeartRateApiClient(BuildConfig.API_BASE_URL)
+    private val apiClient = HeartRateApiClient(BuildConfig.API_BASE_URL, BuildConfig.API_TOKEN)
     private val uploader = HeartRateUploader { samples ->
         apiClient.send(samples).also {
             if (it == UploadResult.SENT) HeartRateMonitorStatus.markSent(System.currentTimeMillis())
@@ -62,6 +62,12 @@ class HeartRateMonitorService : Service(), SensorEventListener {
         startForegroundWithNotification()
         if (BuildConfig.API_BASE_URL.isBlank()) {
             Log.e(TAG, "API base URL is not configured. Set the aliveApiBaseUrl Gradle property")
+            stopSelf()
+            return START_NOT_STICKY
+        }
+        // 空のトークンは API が Authorization ヘッダーを不正として 400 を返し，再送不可としてデータを捨ててしまうため，計測を始めない
+        if (BuildConfig.API_TOKEN.isBlank()) {
+            Log.e(TAG, "API token is not configured. Set the aliveApiToken Gradle property")
             stopSelf()
             return START_NOT_STICKY
         }

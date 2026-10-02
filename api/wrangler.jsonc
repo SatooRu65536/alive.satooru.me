@@ -11,6 +11,9 @@
       "remote": true,
     },
   ],
+  "secrets": {
+    "required": ["HEART_RATE_API_TOKEN"],
+  },
   "durable_objects": {
     "bindings": [
       {

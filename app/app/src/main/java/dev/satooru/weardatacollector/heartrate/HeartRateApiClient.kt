@@ -11,8 +11,9 @@ private const val TIMEOUT_MS = 10_000
 /**
  * 心拍送信 API のクライアント
  * @param baseUrl API のベース URL
+ * @param apiToken 送信 API の認証トークン
  */
-class HeartRateApiClient(private val baseUrl: String) {
+class HeartRateApiClient(private val baseUrl: String, private val apiToken: String) {
     /**
      * 心拍サンプルのバッチを API に送信する．ネットワーク通信を行うためメインスレッドから呼び出してはならない
      * @param samples 送信する心拍サンプルのバッチ
@@ -27,6 +28,7 @@ class HeartRateApiClient(private val baseUrl: String) {
             connection.readTimeout = TIMEOUT_MS
             connection.doOutput = true
             connection.setRequestProperty("Content-Type", "text/csv; charset=utf-8")
+            connection.setRequestProperty("Authorization", "Bearer $apiToken")
             connection.outputStream.use { it.write(createHeartRateRequestBody(samples).toByteArray()) }
             val statusCode = connection.responseCode
             toUploadResult(statusCode).also {

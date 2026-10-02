@@ -21,6 +21,13 @@ android {
         // 値は /api までのベース URL で，エンドポイントのパスは HeartRateApiClient が付与する
         val apiBaseUrl = providers.gradleProperty("aliveApiBaseUrl").getOrElse("https://alive.satooru.me/api")
         buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+        // 送信 API の認証トークン．リポジトリに含めないよう，~/.gradle/gradle.properties または -PaliveApiToken=... で指定する
+        val apiToken = providers.gradleProperty("aliveApiToken").getOrElse("")
+        // API はこの形式以外のトークンを 400 で拒否し，アプリは 400 を再送不可としてデータを捨てるため，ビルド時に弾く．Java の文字列リテラルに埋め込める文字に限る意味もある
+        if (apiToken.isNotEmpty() && !Regex("^[A-Za-z0-9._~+/-]+=*$").matches(apiToken)) {
+            throw GradleException("aliveApiToken must match [A-Za-z0-9._~+/-]+=*")
+        }
+        buildConfigField("String", "API_TOKEN", "\"$apiToken\"")
     }
 
     buildFeatures {
