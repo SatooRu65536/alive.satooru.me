@@ -8,10 +8,10 @@ import {
   LineElement,
   PointElement,
   Tooltip,
-  type Point,
 } from 'chart.js';
 
 import { buildAlignedTickValues, isAlignedToStep } from './heartRateAxis';
+import { buildPoints, type HeartRateChartPoint } from './heartRateChartPoints';
 import {
   isHeartRateAlive,
   parseLatestMeasuredAt,
@@ -48,22 +48,6 @@ function readCssVariable(name: string): string {
 }
 
 /**
- * 集計結果からグラフの 1 系列分の点を作る
- * @param summaries bucketStartedAt 昇順の集計結果
- * @param selectBpm 系列として描く値を集計結果から選ぶ関数
- * @returns x が bucketStartedAt，y が選んだ値の点の配列
- */
-function buildPoints({
-  summaries,
-  selectBpm,
-}: {
-  summaries: readonly HeartRateSummary[];
-  selectBpm: (summary: HeartRateSummary) => number;
-}): Point[] {
-  return summaries.map((summary) => ({ x: summary.bucketStartedAt, y: selectBpm(summary) }));
-}
-
-/**
  * 心拍の集計結果を折れ線グラフとして canvas に描画する
  * @param canvas 描画先
  * @param range 表示期間
@@ -78,7 +62,7 @@ function renderHeartRateChart({
   canvas: HTMLCanvasElement;
   range: HeartRateRange;
   summaries: readonly HeartRateSummary[];
-}): Chart<'line', Point[]> {
+}): Chart<'line', HeartRateChartPoint[]> {
   const lineColor = readCssVariable('--chart-line');
   const bandColor = readCssVariable('--chart-band');
   const gridColor = readCssVariable('--chart-grid');
@@ -188,7 +172,7 @@ function updateHeartRateChart({
   chart,
   summaries,
 }: {
-  chart: Chart<'line', Point[]>;
+  chart: Chart<'line', HeartRateChartPoint[]>;
   summaries: readonly HeartRateSummary[];
 }): void {
   // データセットの並びは renderHeartRateChart で定義した最大・最小・平均の順
@@ -288,7 +272,7 @@ function subscribeHeartRatesSaved(onSaved: () => void): void {
  * @returns 描画したグラフと表示期間．canvas がないかデータが不正な場合は undefined
  */
 function initializeHeartRateChart():
-  | { chart: Chart<'line', Point[]>; rangeKey: HeartRateRangeKey }
+  | { chart: Chart<'line', HeartRateChartPoint[]>; rangeKey: HeartRateRangeKey }
   | undefined {
   const canvas = document.querySelector<HTMLCanvasElement>('#heart-rate-chart');
   if (canvas === null) return undefined;
