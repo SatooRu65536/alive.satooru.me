@@ -1,0 +1,4 @@
+[tools]
+node = "26"
+pnpm = "11.25.0"
+dotenvx = "2.22.0"
