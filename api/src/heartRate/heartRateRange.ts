@@ -28,3 +28,12 @@ export const DEFAULT_HEART_RATE_RANGE_KEY: HeartRateRangeKey = '24h';
 export function isHeartRateRangeKey(value: string | undefined): value is HeartRateRangeKey {
   return HEART_RATE_RANGE_KEYS.some((key) => key === value);
 }
+
+/**
+ * クエリパラメータなどで指定された表示期間を解決する
+ * @param value 表示期間のキーとして受け取った値
+ * @returns 有効なキーであればその値，そうでなければ DEFAULT_HEART_RATE_RANGE_KEY
+ */
+export function resolveHeartRateRangeKey(value: string | undefined): HeartRateRangeKey {
+  return isHeartRateRangeKey(value) ? value : DEFAULT_HEART_RATE_RANGE_KEY;
+}

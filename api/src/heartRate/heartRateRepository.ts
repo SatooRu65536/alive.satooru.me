@@ -1,4 +1,4 @@
-import { getTableColumns, gte, sql } from 'drizzle-orm';
+import { getTableColumns, gte, max, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/d1';
 
 import { heartRates } from '@/db/schema';
@@ -76,4 +76,18 @@ export async function findHeartRateSummaries({
     .where(gte(heartRates.measuredAt, since))
     .groupBy(bucketStartedAt)
     .orderBy(bucketStartedAt);
+}
+
+/**
+ * 保存されている心拍のうち最新の計測時刻を取得する
+ * @param d1Database 取得元の D1 データベース
+ * @returns 最新の measuredAt epoch ms．心拍が 1 件もない場合は undefined
+ * @throws D1 へのクエリが失敗した場合
+ */
+export async function findLatestMeasuredAt(d1Database: D1Database): Promise<number | undefined> {
+  const database = drizzle(d1Database);
+  const [row] = await database
+    .select({ latestMeasuredAt: max(heartRates.measuredAt) })
+    .from(heartRates);
+  return row?.latestMeasuredAt ?? undefined;
 }

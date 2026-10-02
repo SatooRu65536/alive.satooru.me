@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { isHeartRateRangeKey } from './heartRateRange';
+import {
+  DEFAULT_HEART_RATE_RANGE_KEY,
+  isHeartRateRangeKey,
+  resolveHeartRateRangeKey,
+} from './heartRateRange';
 
 describe('isHeartRateRangeKey', () => {
   it.each(['1h', '6h', '24h', '7d'])('定義済みのキー %s を受け付ける', (value) => {
@@ -14,5 +18,15 @@ describe('isHeartRateRangeKey', () => {
   it('Object.prototype のプロパティ名を拒否する', () => {
     expect(isHeartRateRangeKey('toString')).toBe(false);
     expect(isHeartRateRangeKey('constructor')).toBe(false);
+  });
+});
+
+describe('resolveHeartRateRangeKey', () => {
+  it('定義済みのキーはそのまま返す', () => {
+    expect(resolveHeartRateRangeKey('1h')).toBe('1h');
+  });
+
+  it.each([undefined, '', '12h'])('未定義の値 %s は既定の期間を返す', (value) => {
+    expect(resolveHeartRateRangeKey(value)).toBe(DEFAULT_HEART_RATE_RANGE_KEY);
   });
 });

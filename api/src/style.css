@@ -99,3 +99,12 @@ h1 {
 .empty-message {
   color: var(--text-muted);
 }
+
+.alive-warning {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+}
