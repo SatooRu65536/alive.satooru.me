@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  buildHeartRateStreamUrl,
-  buildHeartRateSummariesPath,
-  calculateReconnectDelayMs,
-} from './heartRateStream';
+import { buildHeartRateStreamUrl, calculateReconnectDelayMs } from './heartRateStream';
 
 describe('buildHeartRateStreamUrl', () => {
   it('https のページでは wss の URL を返す', () => {
@@ -17,12 +13,6 @@ describe('buildHeartRateStreamUrl', () => {
     expect(buildHeartRateStreamUrl({ protocol: 'http:', host: 'localhost:5173' })).toBe(
       'ws://localhost:5173/api/heart-rates/stream',
     );
-  });
-});
-
-describe('buildHeartRateSummariesPath', () => {
-  it('表示期間をクエリパラメータに含める', () => {
-    expect(buildHeartRateSummariesPath('1h')).toBe('/api/heart-rates/summaries?range=1h');
   });
 });
 

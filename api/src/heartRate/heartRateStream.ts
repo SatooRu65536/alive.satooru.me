@@ -1,5 +1,3 @@
-import type { HeartRateRangeKey } from './heartRateRange';
-
 const INITIAL_RECONNECT_DELAY_MS = 1_000;
 
 // 端末から送信されない間も再接続が過剰に続かないよう，待ち時間に上限を設けて間隔を空ける
@@ -20,15 +18,6 @@ export function buildHeartRateStreamUrl({
 }): string {
   const webSocketProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
   return `${webSocketProtocol}//${host}/api/heart-rates/stream`;
-}
-
-/**
- * 表示期間の集計結果を取得する API のパスを作る
- * @param rangeKey 表示期間
- * @returns ページと同じオリジンへのパス
- */
-export function buildHeartRateSummariesPath(rangeKey: HeartRateRangeKey): string {
-  return `/api/heart-rates/summaries?range=${encodeURIComponent(rangeKey)}`;
 }
 
 /**

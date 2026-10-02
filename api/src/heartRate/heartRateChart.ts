@@ -25,12 +25,12 @@ import {
   type HeartRateRangeKey,
 } from './heartRateRange';
 import { buildHeartRateStatsText, type HeartRateStatsText } from './heartRateStats';
+import { buildHeartRateStreamUrl, calculateReconnectDelayMs } from './heartRateStream';
 import {
-  buildHeartRateStreamUrl,
   buildHeartRateSummariesPath,
-  calculateReconnectDelayMs,
-} from './heartRateStream';
-import { parseHeartRateSummaries, type HeartRateSummary } from './heartRateSummary';
+  parseHeartRateSummaries,
+  type HeartRateSummary,
+} from './heartRateSummary';
 import { formatDisplayTime } from './heartRateTimeFormat';
 
 Chart.register(Filler, Legend, LinearScale, LineController, LineElement, PointElement, Tooltip);

@@ -1,3 +1,5 @@
+import type { HeartRateRangeKey } from './heartRateRange';
+
 export interface HeartRateSummary {
   readonly bucketStartedAt: number;
   readonly averageBpm: number;
@@ -37,4 +39,13 @@ export function parseHeartRateSummaries(json: string): HeartRateSummariesParseRe
     return { ok: false, error: 'summaries must be an array of heart rate summaries' };
   }
   return { ok: true, summaries: value };
+}
+
+/**
+ * 表示期間の集計結果を取得する API のパスを作る
+ * @param rangeKey 表示期間
+ * @returns ページと同じオリジンへのパス
+ */
+export function buildHeartRateSummariesPath(rangeKey: HeartRateRangeKey): string {
+  return `/api/heart-rates/summaries?range=${encodeURIComponent(rangeKey)}`;
 }

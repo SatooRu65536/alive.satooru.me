@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseHeartRateSummaries } from './heartRateSummary';
+import { buildHeartRateSummariesPath, parseHeartRateSummaries } from './heartRateSummary';
 
 const SUMMARY = { bucketStartedAt: 1_790_000_000_000, averageBpm: 72.5, minBpm: 70, maxBpm: 75 };
 
@@ -30,5 +30,11 @@ describe('parseHeartRateSummaries', () => {
     { name: 'null の要素', summary: null },
   ])('$name を含む配列を拒否する', ({ summary }) => {
     expect(parseHeartRateSummaries(JSON.stringify([summary])).ok).toBe(false);
+  });
+});
+
+describe('buildHeartRateSummariesPath', () => {
+  it('表示期間をクエリパラメータに含める', () => {
+    expect(buildHeartRateSummariesPath('1h')).toBe('/api/heart-rates/summaries?range=1h');
   });
 });
