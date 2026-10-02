@@ -349,13 +349,19 @@ function initializeHeartRatePage(): void {
       return;
     }
     isRefreshing = true;
-    do {
-      hasPendingRefresh = false;
-      await Promise.all([refreshChart(), refreshAliveWarning()]);
-    } while (hasPendingRefresh);
-    isRefreshing = false;
+    try {
+      do {
+        hasPendingRefresh = false;
+        await Promise.all([refreshChart(), refreshAliveWarning()]);
+      } while (hasPendingRefresh);
+    } finally {
+      // 描画中に例外が起きても，次の通知で取り直せるようにする
+      isRefreshing = false;
+    }
   };
-  subscribeHeartRatesSaved(() => void refresh());
+  subscribeHeartRatesSaved(() => {
+    refresh().catch((error: unknown) => console.error('failed to refresh heart rates', error));
+  });
 }
 
 initializeHeartRatePage();
