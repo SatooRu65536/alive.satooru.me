@@ -16,6 +16,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 送信先は環境ごとに異なるため，-PaliveApiBaseUrl=... または gradle.properties で指定する
+        val apiBaseUrl = providers.gradleProperty("aliveApiBaseUrl").getOrElse("")
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
