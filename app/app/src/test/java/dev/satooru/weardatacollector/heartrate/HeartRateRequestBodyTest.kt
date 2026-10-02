@@ -17,6 +17,11 @@ class HeartRateRequestBodyTest {
     }
 
     @Test
+    fun writesSmallBpmWithoutExponent() {
+        assertEquals("1700000000000,0.00010", createHeartRateRequestBody(listOf(HeartRateSample(1_700_000_000_000, 0.0001f))))
+    }
+
+    @Test
     fun acceptsBpmWithinApiRange() {
         assertTrue(isValidBpm(0.1f))
         assertTrue(isValidBpm(300f))
