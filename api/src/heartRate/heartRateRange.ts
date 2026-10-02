@@ -51,7 +51,7 @@ export const HEART_RATE_RANGES: Readonly<Record<HeartRateRangeKey, HeartRateRang
   },
 };
 
-export const DEFAULT_HEART_RATE_RANGE_KEY: HeartRateRangeKey = '24h';
+export const DEFAULT_HEART_RATE_RANGE_KEY: HeartRateRangeKey = '1h';
 
 /**
  * 心拍グラフの表示期間を表すキーかどうかを判定する
