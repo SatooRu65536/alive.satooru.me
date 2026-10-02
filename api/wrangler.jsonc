@@ -8,9 +8,9 @@
       "binding": "DB",
       "database_name": "api-alive-satooru-me",
       "database_id": "2d2a3130-70f8-4e0d-8766-efb8b6074807",
+      "remote": true,
     },
   ],
-  // ページを開いているクライアントに心拍の保存を WebSocket で通知する
   "durable_objects": {
     "bindings": [
       {
