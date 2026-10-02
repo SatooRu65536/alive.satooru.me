@@ -306,6 +306,10 @@ function initializeAliveWarning(): ((latestMeasuredAt: number | undefined) => vo
   };
   render();
   setInterval(render, ALIVE_CHECK_INTERVAL_MS);
+  // 非表示のタブではタイマーが間引かれることがあるため，表示に戻ったときにも判定し直す
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') render();
+  });
   return (nextLatestMeasuredAt) => {
     latestMeasuredAt = nextLatestMeasuredAt;
     render();
