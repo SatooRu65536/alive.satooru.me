@@ -5,11 +5,6 @@
   "main": "./src/index.tsx",
   "d1_databases": [
     {
-      "binding": "api_alive_satooru_me",
-      "database_name": "api-alive-satooru-me",
-      "database_id": "2d2a3130-70f8-4e0d-8766-efb8b6074807",
-    },
-    {
       "binding": "DB",
       "database_name": "api-alive-satooru-me",
       "database_id": "2d2a3130-70f8-4e0d-8766-efb8b6074807",

@@ -6,7 +6,12 @@
     "build": "vite build",
     "preview": "$npm_execpath run build && vite preview",
     "deploy": "$npm_execpath run build && wrangler deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "format": "oxfmt --write .",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "fix": "$npm_execpath run format && $npm_execpath run lint:fix",
+    "check": "$npm_execpath run lint && $npm_execpath run test"
   },
   "dependencies": {
     "hono": "^4.13.12"

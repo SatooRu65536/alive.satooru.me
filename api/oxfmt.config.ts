@@ -1,10 +1,7 @@
 import { defineConfig } from 'oxfmt';
 
 export default defineConfig({
-  ignorePatterns: [
-    '**/worker-configuration.d.ts',
-    '.claude/settings.local.json',
-  ],
+  ignorePatterns: ['**/worker-configuration.d.ts', '.claude/settings.local.json'],
   printWidth: 100,
   tabWidth: 2,
   useTabs: false,

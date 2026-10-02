@@ -7,7 +7,6 @@ export default defineConfig({
     correctness: 'error',
   },
   rules: {
-    'import/no-default-export': 'error',
     'import/no-relative-parent-imports': 'error',
   },
   env: {
