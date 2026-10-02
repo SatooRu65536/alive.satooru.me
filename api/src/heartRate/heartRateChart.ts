@@ -11,6 +11,7 @@ import {
   type Point,
 } from 'chart.js';
 
+import { buildAlignedTickValues, isAlignedToStep } from './heartRateAxis';
 import {
   isHeartRateAlive,
   parseLatestMeasuredAt,
@@ -128,11 +129,35 @@ function renderHeartRateChart({
       scales: {
         x: {
           type: 'linear',
+          // 目盛りの位置で軸の範囲を広げず，データのある範囲だけを表示する
+          bounds: 'data',
           grid: { color: gridColor },
+          // Chart.js が自動で決める目盛りは区切りの良い時刻にならないため，日本時間の区切りに置き換える
+          afterBuildTicks: (scale) => {
+            // 点が 1 つだけだと Chart.js が値の ±5% (epoch ms では数年分) まで軸を広げ，目盛りが膨大になるため線を引かない
+            if (scale.max - scale.min > range.durationMs) {
+              scale.ticks = [];
+              return;
+            }
+            scale.ticks = buildAlignedTickValues({
+              min: scale.min,
+              max: scale.max,
+              stepMs: range.gridStepMs,
+            }).map((value) => ({ value }));
+          },
           ticks: {
             color: textColor,
-            maxTicksLimit: 8,
-            callback: (value) => formatTime(Number(value)),
+            // ラベルのない目盛りも数えて回転の要否が判定されるため，回転させない．ラベルは labelStepMs 間隔のため重なりにくい
+            maxRotation: 0,
+            // 間引かれた目盛りはグリッド線も消えるため，間引かずにラベルだけを空にする
+            autoSkip: false,
+            // グリッド線はすべての目盛りに引き，ラベルは labelStepMs の区切りの目盛りだけに添える
+            callback: (value) => {
+              const epochMs = Number(value);
+              return isAlignedToStep({ epochMs, stepMs: range.labelStepMs })
+                ? formatTime(epochMs)
+                : '';
+            },
           },
         },
         y: {
