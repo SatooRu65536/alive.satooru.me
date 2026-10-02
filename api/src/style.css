@@ -8,6 +8,8 @@
   --chart-line: #e5484d;
   --chart-band: rgba(229, 72, 77, 0.18);
   --chart-grid: rgba(0, 0, 0, 0.08);
+  /* 白い文字とのコントラスト比が 4.5:1 以上になる濃さにする */
+  --warning-background: #b42318;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -104,7 +106,7 @@ h1 {
   margin: 0 0 16px;
   padding: 12px 16px;
   border-radius: 12px;
-  background: var(--accent);
+  background: var(--warning-background);
   color: #ffffff;
   font-weight: 600;
 }
