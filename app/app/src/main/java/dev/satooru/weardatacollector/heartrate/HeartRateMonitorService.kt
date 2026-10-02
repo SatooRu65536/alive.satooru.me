@@ -28,7 +28,7 @@ private const val NOTIFICATION_ID = 1
 private const val NANOSECONDS_PER_MILLISECOND = 1_000_000L
 
 /**
- * 心拍センサーの値を収集し，[BATCH_DURATION_MS] ごとにまとめて API に送信するフォアグラウンドサービス
+ * 心拍センサーの値を収集し，画面で設定した間隔ごとにまとめて API に送信するフォアグラウンドサービス
  */
 class HeartRateMonitorService : Service(), SensorEventListener {
     private val uploadExecutor = Executors.newSingleThreadScheduledExecutor()
@@ -45,7 +45,7 @@ class HeartRateMonitorService : Service(), SensorEventListener {
     override fun onCreate() {
         super.onCreate()
         sensorManager = getSystemService(SensorManager::class.java)
-        // 画面消灯中も計測と 1 分ごとの送信を続けるため CPU のスリープを抑止する
+        // 画面消灯中も計測と定期的な送信を続けるため CPU のスリープを抑止する
         wakeLock = getSystemService(PowerManager::class.java)
             .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "$packageName:$TAG")
     }
@@ -76,11 +76,12 @@ class HeartRateMonitorService : Service(), SensorEventListener {
         HeartRateMonitorStatus.setMonitoring(true)
         wakeLock.acquire()
         sensorManager.registerListener(this, heartRateSensor, SensorManager.SENSOR_DELAY_NORMAL)
-        // 送信にかかった時間で間隔がずれて 1 分を超える分が別バッチに分かれないよう，固定レートで実行する
+        // 画面で開始前に保存した間隔を使う．送信にかかった時間で間隔がずれないよう，固定レートで実行する
+        val uploadIntervalMs = UploadIntervalStore(this).load().millis
         uploadExecutor.scheduleAtFixedRate(
             ::uploadBufferedSamples,
-            BATCH_DURATION_MS,
-            BATCH_DURATION_MS,
+            uploadIntervalMs,
+            uploadIntervalMs,
             TimeUnit.MILLISECONDS,
         )
         // 権限がない状態でシステムに再起動されると例外になるため，自動再起動はさせない

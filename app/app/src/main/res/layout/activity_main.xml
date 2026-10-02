@@ -1,34 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/status_text"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/heart_rate_stopped" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/last_sent_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heart_rate_stopped" />
 
-    <Button
-        android:id="@+id/start_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/heart_rate_start" />
+        <TextView
+            android:id="@+id/last_sent_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-    <Button
-        android:id="@+id/stop_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="@string/heart_rate_stop" />
+        <LinearLayout
+            android:id="@+id/upload_interval_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/upload_interval_value"
+                android:text="@string/heart_rate_upload_interval" />
+
+            <EditText
+                android:id="@+id/upload_interval_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="3"
+                android:gravity="center"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:maxLength="4" />
+
+            <RadioGroup
+                android:id="@+id/upload_interval_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 縦に並べた 2 つの選択肢の間が空きすぎないよう，テーマ既定のタップ領域の最小高さ（minTouchTargetSize）を外す -->
+                <RadioButton
+                    android:id="@+id/upload_interval_unit_seconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:text="@string/heart_rate_upload_interval_unit_seconds" />
+
+                <RadioButton
+                    android:id="@+id/upload_interval_unit_minutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="0dp"
+                    android:text="@string/heart_rate_upload_interval_unit_minutes" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heart_rate_start" />
+
+        <Button
+            android:id="@+id/stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/heart_rate_stop" />
+
+    </LinearLayout>
+
+</ScrollView>

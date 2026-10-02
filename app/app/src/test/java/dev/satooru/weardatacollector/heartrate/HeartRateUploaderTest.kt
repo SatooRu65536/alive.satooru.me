@@ -94,4 +94,44 @@ class HeartRateUploaderTest {
         assertEquals(60, sentBatches.size)
         assertEquals(BATCH_DURATION_MS, sentBatches.first().single().measuredAt)
     }
+
+    @Test
+    fun dropsOldestSamplesBeyondOneHourEvenWhenUploadIntervalIsShort() {
+        val sentBatches = mutableListOf<List<HeartRateSample>>()
+        var isServerAvailable = false
+        val uploader = HeartRateUploader {
+            sentBatches.add(it)
+            if (isServerAvailable) UploadResult.SENT else UploadResult.FAILED
+        }
+
+        // 5 秒ごとの送信を 61 分間失敗させる
+        val intervalMs = 5_000L
+        repeat((61 * BATCH_DURATION_MS / intervalMs).toInt()) { index ->
+            uploader.record(HeartRateSample(index * intervalMs, 60f))
+            uploader.uploadBufferedSamples()
+        }
+        sentBatches.clear()
+        isServerAvailable = true
+        uploader.uploadBufferedSamples()
+
+        // 1 分ごとのバッチに分割し直されるため，最も古い 1 分だけが破棄される
+        assertEquals(60, sentBatches.size)
+        assertEquals(BATCH_DURATION_MS, sentBatches.first().first().measuredAt)
+    }
+
+    @Test
+    fun resendsOnlyUnsentBatchesAfterPartialFailure() {
+        val sentBatches = mutableListOf<List<HeartRateSample>>()
+        val results = ArrayDeque(
+            listOf(UploadResult.SENT, UploadResult.REJECTED, UploadResult.FAILED, UploadResult.SENT),
+        )
+        val uploader = HeartRateUploader { sentBatches.add(it); results.removeFirst() }
+        val samples = (0L..2L).map { HeartRateSample(it * BATCH_DURATION_MS, 60f) }
+
+        samples.forEach(uploader::record)
+        uploader.uploadBufferedSamples()
+        uploader.uploadBufferedSamples()
+
+        assertEquals(samples.map(::listOf) + listOf(listOf(samples[2])), sentBatches)
+    }
 }
