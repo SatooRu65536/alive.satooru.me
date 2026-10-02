@@ -18,12 +18,13 @@ export const renderer = jsxRenderer(({ children }) => {
         <meta property="og:url" content={SITE_URL} />
         <meta property="og:title" content="alive.satooru.me" />
         <meta property="og:description" content="生きているかを確認できるサイト" />
-        <meta property="og:image" content={`${SITE_URL}/ogp.webp`} />
-        <meta property="og:image:type" content="image/webp" />
+        <meta property="og:image" content={`${SITE_URL}/ogp.png`} />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1280" />
         <meta property="og:image:height" content="720" />
         <meta property="og:image:alt" content="心拍数の推移を表すグラフ" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={`${SITE_URL}/ogp.png`} />
         <ViteClient />
         <Link href="/src/style.css" rel="stylesheet" />
       </head>
