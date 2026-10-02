@@ -247,7 +247,7 @@ async function fetchLatestMeasuredAt(): Promise<LatestMeasuredAtParseResult> {
 
 /**
  * 心拍の保存通知を WebSocket で購読する．切断された場合は間隔を空けて再接続し続ける
- * @param onSaved 心拍が保存されたとき，および接続したときに呼び出す関数．接続時はページの描画から接続までや切断中の保存を取りこぼさないよう呼び出す
+ * @param onSaved 心拍が保存されたとき，および接続したときに呼び出す関数
  */
 function subscribeHeartRatesSaved(onSaved: () => void): void {
   let reconnectAttemptCount = 0;
@@ -256,6 +256,7 @@ function subscribeHeartRatesSaved(onSaved: () => void): void {
     const webSocket = new WebSocket(buildHeartRateStreamUrl(location));
     webSocket.addEventListener('open', () => {
       reconnectAttemptCount = 0;
+      // ページの描画から接続までの間や，切断中に保存された分を取りこぼさないよう取り直す
       onSaved();
     });
     webSocket.addEventListener('message', () => onSaved());
