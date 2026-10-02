@@ -18,6 +18,6 @@ heartRateRoute.post('/', async (c) => {
     return c.json({ error: result.error }, 400);
   }
 
-  const savedCount = await saveHeartRateSamples({ database: c.env.DB, samples: result.samples });
+  const savedCount = await saveHeartRateSamples({ d1Database: c.env.DB, samples: result.samples });
   return c.json({ receivedCount: result.samples.length, savedCount }, 201);
 });

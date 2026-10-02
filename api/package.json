@@ -14,13 +14,16 @@
     "check": "$npm_execpath run lint && $npm_execpath run test",
     "test": "vitest run",
     "db:migrate:local": "wrangler d1 migrations apply api-alive-satooru-me --local",
-    "db:migrate:remote": "wrangler d1 migrations apply api-alive-satooru-me --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply api-alive-satooru-me --remote",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
+    "drizzle-orm": "^0.45.3",
     "hono": "^4.13.12"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.43",
+    "drizzle-kit": "^0.31.11",
     "oxfmt": "^0.70.0",
     "oxlint": "^1.85.0",
     "vite": "^8.1.3",
